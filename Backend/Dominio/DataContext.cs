@@ -29,6 +29,10 @@
 
         public System.Data.Entity.DbSet<Dominio.TournamentGroup> TournamentGroups { get; set; }
 
+        public System.Data.Entity.DbSet<Dominio.Date> Dates { get; set; }
+
+        public System.Data.Entity.DbSet<Dominio.TournamentTeam> TournamentTeams { get; set; }
+
         // Agregue un DbSet para cada tipo de entidad que desee incluir en el modelo. Para obtener más información 
         // sobre cómo configurar y usar un modelo Code First, vea http://go.microsoft.com/fwlink/?LinkId=390109.
 

@@ -73,6 +73,23 @@ namespace Backend.Controllers
             return View(view);
         }
 
+        // GET: Tournaments/Edit/5
+        public async Task<ActionResult> Edit(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Tournament tournament = await db.Tournaments.FindAsync(id);
+            if (tournament == null)
+            {
+                return HttpNotFound();
+            }
+            var view = SetTournoment(tournament);
+            return View(view);
+        }
+
+        #region Tournament Group
         public ActionResult CreateGroup(int? id)
         {
             if (id == null)
@@ -119,22 +136,6 @@ namespace Backend.Controllers
             };
         }
 
-        // GET: Tournaments/Edit/5
-        public async Task<ActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Tournament tournament = await db.Tournaments.FindAsync(id);
-            if (tournament == null)
-            {
-                return HttpNotFound();
-            }
-            var view = SetTournoment(tournament);
-            return View(view);
-        }
-
         public async Task<ActionResult> EditGroup(int? id)
         {
             if (id == null)
@@ -163,6 +164,20 @@ namespace Backend.Controllers
             return View(view);
         }
 
+        public async Task<ActionResult> DetailsGroup(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            TournamentGroup detailsGroup = await db.TournamentGroups.FindAsync(id);
+
+            if (detailsGroup == null)
+                return HttpNotFound();
+
+            return View(detailsGroup);
+        }
+
         public async Task<ActionResult> DeleteGroup(int? id)
         {
             if (id == null)
@@ -183,7 +198,8 @@ namespace Backend.Controllers
 
         private object SetTournoment(Tournament tournament)
         {
-            return new TournamentView {
+            return new TournamentView
+            {
                 TournamentId = tournament.TournamentId,
                 IsActive = tournament.IsActive,
                 Logo = tournament.Logo,
@@ -193,6 +209,7 @@ namespace Backend.Controllers
             };
         }
 
+        #endregion
         // POST: Tournaments/Edit/5
         // Para protegerse de ataques de publicación excesiva, habilite las propiedades específicas a las que desea enlazarse. Para obtener 
         // más información vea https://go.microsoft.com/fwlink/?LinkId=317598.
@@ -246,6 +263,83 @@ namespace Backend.Controllers
             await db.SaveChangesAsync();
             return RedirectToAction("Index");
         }
+
+        #region Modulo de Fecha Tournament Group
+
+        public async Task<ActionResult> CreateDate(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            Tournament tournament = await db.Tournaments.FindAsync(id);
+
+            Date date = new Date { TournamentId = tournament.TournamentId };
+
+            return View(date);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> CreateDate(Date date)
+        {
+            if (ModelState.IsValid)
+            {
+                db.Dates.Add(date);
+                await db.SaveChangesAsync();
+                return RedirectToAction($"Details/{date.TournamentId}");
+            }
+
+            return View(date);
+        }
+
+        public async Task<ActionResult> EditDate(int? id)
+        {
+            if(id== null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Date date = await db.Dates.FindAsync(id);
+
+            return View(date);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> EditDate(Date date)
+        {
+            if (ModelState.IsValid)
+            {
+                db.Entry(date).State = EntityState.Modified;
+                await db.SaveChangesAsync();
+                return RedirectToAction($"Details/{date.TournamentId}");
+            }
+
+            return View(date);
+        }
+
+        public async Task<ActionResult> DetailDate(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Date date = await db.Dates.FindAsync(id);
+
+            return View(date);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> DeleteDate(int id)
+        {
+            Date date = await db.Dates.FindAsync(id);
+            db.Dates.Remove(date);
+            await db.SaveChangesAsync();
+            return RedirectToAction($"Details/{date.TournamentId}");
+        }
+        #endregion
 
         protected override void Dispose(bool disposing)
         {

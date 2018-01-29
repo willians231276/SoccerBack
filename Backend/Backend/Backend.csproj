@@ -291,6 +291,10 @@
     <Content Include="Views\Leagues\CreateTeam.cshtml" />
     <Content Include="Views\Leagues\EditTeam.cshtml" />
     <Content Include="Views\Leagues\DetailsTeam.cshtml" />
+    <Content Include="Views\Tournaments\CreateDate.cshtml" />
+    <Content Include="Views\Tournaments\EditDate.cshtml" />
+    <Content Include="Views\Tournaments\DetailDate.cshtml" />
+    <Content Include="Views\Tournaments\DetailsGroup.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

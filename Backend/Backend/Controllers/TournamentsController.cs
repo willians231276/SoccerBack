@@ -31,7 +31,7 @@ namespace Backend.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Tournament tournament = await db.Tournaments.Include(t=> t.TournamentGroups).Where(t => t.TournamentId == id).FirstOrDefaultAsync();//.FindAsync(id);
+            Tournament tournament = await db.Tournaments.Include(t => t.TournamentGroups).Where(t => t.TournamentId == id).FirstOrDefaultAsync();//.FindAsync(id);
             if (tournament == null)
             {
                 return HttpNotFound();
@@ -89,6 +89,195 @@ namespace Backend.Controllers
             return View(view);
         }
 
+        // POST: Tournaments/Edit/5
+        // Para protegerse de ataques de publicación excesiva, habilite las propiedades específicas a las que desea enlazarse. Para obtener 
+        // más información vea https://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Edit(TournamentView view)
+        {
+            if (ModelState.IsValid)
+            {
+                var pic = view.Logo;
+                var folder = "~/Content/Logos";
+
+                if (view.LogoFile != null)
+                {
+                    pic = FilesHelper.UploadPhoto(view.LogoFile, folder);
+                    pic = $"{folder}/{pic}";
+                }
+                view.Logo = pic;
+
+                var tournament = GetTournoment(view);
+
+                db.Entry(tournament).State = EntityState.Modified;
+                await db.SaveChangesAsync();
+                return RedirectToAction("Index");
+            }
+            return View(view);
+        }
+
+        // GET: Tournaments/Delete/5
+        public async Task<ActionResult> Delete(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Tournament tournament = await db.Tournaments.FindAsync(id);
+            if (tournament == null)
+            {
+                return HttpNotFound();
+            }
+            return View(tournament);
+        }
+
+        // POST: Tournaments/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> DeleteConfirmed(int id)
+        {
+            Tournament tournament = await db.Tournaments.FindAsync(id);
+            db.Tournaments.Remove(tournament);
+            await db.SaveChangesAsync();
+            return RedirectToAction("Index");
+        }
+
+        #region Tournament Team
+        public ActionResult CreateTeam(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            var tournamentGroup = db.TournamentGroups.Find(id);
+
+            var tournamentTeamView = new TournamentTeamView
+            {
+                TournamentGroupId = tournamentGroup.TournamentGroupId,
+            };
+
+            ViewBag.LeagueId = new SelectList(db.Leagues.OrderBy(t => t.Name), "LeagueId", "Name");
+            ViewBag.TeamId = new SelectList(db.Teams.Where(t => t.LeagueId == db.Leagues.FirstOrDefault().LeagueId), "TeamId", "Name");
+            return View(tournamentTeamView);
+        }
+
+        // POST: Tournaments/Create
+        // Para protegerse de ataques de publicación excesiva, habilite las propiedades específicas a las que desea enlazarse. Para obtener 
+        // más información vea https://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> CreateTeam(TournamentTeamView view)
+        {
+            if (ModelState.IsValid)
+            {
+                var tournamentTeam = GetTournamentTeam(view);
+                db.TournamentTeams.Add(tournamentTeam);
+                await db.SaveChangesAsync();
+                return RedirectToAction($"DetailsGroup/{view.TournamentGroupId}");
+            }
+
+            ViewBag.LeagueId = new SelectList(db.Leagues.OrderBy(t => t.Name), "LeagueId", "Name");
+            ViewBag.TeamId = new SelectList(db.Teams.Where(t => t.LeagueId == db.Leagues.FirstOrDefault().LeagueId), "TeamId", "Name");
+            return View(view);
+        }
+
+        TournamentTeam GetTournamentTeam(TournamentTeamView view)
+        {
+            TournamentTeam _returnView = new TournamentTeam
+            {
+                AgainstGoals = view.AgainstGoals,
+                FavorGoals = view.FavorGoals,
+                MatchesLost = view.MatchesLost,
+                MatchesPlayed = view.MatchesPlayed,
+                MatchesTied = view.MatchesTied,
+                MatchesWon = view.MatchesWon,
+                Points = view.Points,
+                Position = view.Position,
+                TeamId = view.TeamId,
+                TournamentGroupId = view.TournamentGroupId,
+                TournamentTeamId = view.TournamentTeamId,
+                Team = view.Team,
+                TournamentGroup = view.TournamentGroup
+            };
+            return _returnView;
+        }
+
+        TournamentTeamView GetTournamentTeamView(TournamentTeam Team)
+        {
+            TournamentTeamView _returnView = new TournamentTeamView
+            {
+                LeagueId = Team.Team.LeagueId,
+                AgainstGoals = Team.AgainstGoals,
+                FavorGoals = Team.FavorGoals,
+                MatchesLost = Team.MatchesLost,
+                MatchesPlayed = Team.MatchesPlayed,
+                MatchesTied = Team.MatchesTied,
+                MatchesWon = Team.MatchesWon,
+                Points = Team.Points,
+                Position = Team.Position,
+                TeamId = Team.TeamId,
+                TournamentGroupId = Team.TournamentGroupId,
+                TournamentGroup = Team.TournamentGroup,
+                TournamentTeamId = Team.TournamentTeamId,
+                Team = Team.Team
+            };
+
+            return _returnView;
+        }
+        public async Task<ActionResult> EditTeam(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            var tournamentTeam = await db.TournamentTeams.FindAsync(id);
+            var tournamentTeamView = GetTournamentTeamView(tournamentTeam);
+
+            ViewBag.LeagueId = new SelectList(db.Leagues.OrderBy(t => t.Name), "LeagueId", "Name", tournamentTeam.Team.LeagueId);
+            ViewBag.TeamId = new SelectList(db.Teams.Where(t => t.LeagueId == tournamentTeam.Team.LeagueId), "TeamId", "Name", tournamentTeam.Team.TeamId);
+            return View(tournamentTeamView);
+        }
+
+        // POST: Tournaments/Create
+        // Para protegerse de ataques de publicación excesiva, habilite las propiedades específicas a las que desea enlazarse. Para obtener 
+        // más información vea https://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> EditTeam(TournamentTeamView view)
+        {
+            if (ModelState.IsValid)
+            {
+                var tournamentTeam = GetTournamentTeam(view);
+                db.Entry(tournamentTeam).State = EntityState.Modified;
+                await db.SaveChangesAsync();
+                return RedirectToAction($"DetailsGroup/{view.TournamentGroupId}");
+            }
+
+            ViewBag.LeagueId = new SelectList(db.Leagues.OrderBy(t => t.Name), "LeagueId", "Name");
+            ViewBag.TeamId = new SelectList(db.Teams.Where(t => t.LeagueId == db.Leagues.FirstOrDefault().LeagueId), "TeamId", "Name");
+            return View(view);
+        }
+
+        // GET: Tournaments/Delete/5
+        public async Task<ActionResult> DeleteTeam(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            TournamentTeam tournamentTeam = await db.TournamentTeams.FindAsync(id);
+            if (tournamentTeam == null)
+            {
+                return HttpNotFound();
+            }
+
+            db.Entry(tournamentTeam).State = EntityState.Deleted;
+            await db.SaveChangesAsync();
+            return RedirectToAction($"DetailsGroup/{tournamentTeam.TournamentGroupId}");
+        }
+
+        #endregion
         #region Tournament Group
         public ActionResult CreateGroup(int? id)
         {
@@ -210,59 +399,7 @@ namespace Backend.Controllers
         }
 
         #endregion
-        // POST: Tournaments/Edit/5
-        // Para protegerse de ataques de publicación excesiva, habilite las propiedades específicas a las que desea enlazarse. Para obtener 
-        // más información vea https://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(TournamentView view)
-        {
-            if (ModelState.IsValid)
-            {
-                var pic = view.Logo;
-                var folder = "~/Content/Logos";
 
-                if(view.LogoFile != null)
-                {
-                    pic = FilesHelper.UploadPhoto(view.LogoFile,folder);
-                    pic = $"{folder}/{pic}";
-                }
-                view.Logo = pic;
-
-                var tournament = GetTournoment(view);
-
-                db.Entry(tournament).State = EntityState.Modified;
-                await db.SaveChangesAsync();
-                return RedirectToAction("Index");
-            }
-            return View(view);
-        }
-
-        // GET: Tournaments/Delete/5
-        public async Task<ActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Tournament tournament = await db.Tournaments.FindAsync(id);
-            if (tournament == null)
-            {
-                return HttpNotFound();
-            }
-            return View(tournament);
-        }
-
-        // POST: Tournaments/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> DeleteConfirmed(int id)
-        {
-            Tournament tournament = await db.Tournaments.FindAsync(id);
-            db.Tournaments.Remove(tournament);
-            await db.SaveChangesAsync();
-            return RedirectToAction("Index");
-        }
 
         #region Modulo de Fecha Tournament Group
 
@@ -296,7 +433,7 @@ namespace Backend.Controllers
 
         public async Task<ActionResult> EditDate(int? id)
         {
-            if(id== null)
+            if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }

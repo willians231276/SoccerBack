@@ -55,6 +55,7 @@
     <Compile Include="GroupUser.cs" />
     <Compile Include="League.cs" />
     <Compile Include="Match.cs" />
+    <Compile Include="MatchesMap.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Prediction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -64,6 +65,7 @@
     <Compile Include="TournamentGroup.cs" />
     <Compile Include="TournamentTeam.cs" />
     <Compile Include="User.cs" />
+    <Compile Include="UsersMap.cs" />
     <Compile Include="UserType.cs" />
   </ItemGroup>
   <ItemGroup>

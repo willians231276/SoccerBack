@@ -88,21 +88,25 @@
                     <th>
                         @Html.DisplayNameFor(model => model.Dates.FirstOrDefault().Name)
                     </th>
+                    <th>#</th>
                     <th></th>
                 </tr>
 
                 @foreach (var item in Model.Dates.OrderBy(g => g.Name))
                 {
-                    <tr>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Name)
-                        </td>
-                        <td>
-                            @Html.ActionLink("Edit", "EditDate", new { id = item.TournamentId }) |
-                            @Html.ActionLink("Details", "DetailDate", new { id = item.TournamentId }) |
-                            @Html.ActionLink("Delete", "DeleteDate", new { id = item.TournamentId }, new { onclick = "return confirm('Areyou sure to delete this record?');" })
-                        </td>
-                    </tr>
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Matches.Count)
+                    </td>
+                    <td>
+                        @Html.ActionLink("Edit", "EditDate", new { id = item.TournamentId }) |
+                        @Html.ActionLink("Details", "DetailDate", new { id = item.TournamentId }) |
+                        @Html.ActionLink("Delete", "DeleteDate", new { id = item.TournamentId }, new { onclick = "return confirm('Areyou sure to delete this record?');" })
+                    </td>
+                </tr>
                 }
 
             </table>

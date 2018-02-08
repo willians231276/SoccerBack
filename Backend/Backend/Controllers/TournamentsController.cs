@@ -462,7 +462,10 @@ namespace Backend.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Date date = await db.Dates.FindAsync(id);
+            var date = await db.Dates.FindAsync(id);
+
+            if (date == null)
+                return HttpNotFound();
 
             return View(date);
         }
@@ -475,6 +478,81 @@ namespace Backend.Controllers
             db.Dates.Remove(date);
             await db.SaveChangesAsync();
             return RedirectToAction($"Details/{date.TournamentId}");
+        }
+        #endregion
+
+        #region Match
+        public async Task<ActionResult> CreateMatch(int? id)
+        {
+
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            var date = await db.Dates.FindAsync(id);
+
+            if (date == null)
+                return HttpNotFound();
+
+            var match = new MatchView
+            {
+                DateId = date.DateId,
+                StatusId = 1
+            };
+
+            ViewBag.LocalLeagueId = new SelectList(db.Leagues.OrderBy(t => t.Name), "LeagueId", "Name");
+            ViewBag.LocalId = new SelectList(db.Teams.Where(t => t.LeagueId == db.Leagues.FirstOrDefault().LeagueId), "TeamId", "Name");
+
+            ViewBag.VisitorLeagueId = new SelectList(db.Leagues.OrderBy(t => t.Name), "LeagueId", "Name");
+            ViewBag.VisitorId = new SelectList(db.Teams.Where(t => t.LeagueId == db.Leagues.FirstOrDefault().LeagueId), "TeamId", "Name");
+
+            ViewBag.TournamentGroupId = new SelectList(db.TournamentGroups.Where(tg => tg.TournamentId == date.TournamentId).OrderBy(tg => tg.Name), "TournamentGroupId", "Name");
+
+            return View(match);
+        }
+
+        // POST: Matches/Create
+        // Para protegerse de ataques de publicación excesiva, habilite las propiedades específicas a las que desea enlazarse. Para obtener 
+        // más información vea https://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> CreateMatch(MatchView view)
+        {
+            if (ModelState.IsValid)
+            {
+
+                var match = ToMatch(view);
+
+                db.Matches.Add(match);
+                await db.SaveChangesAsync();
+                return RedirectToAction($"DetailDate/{match.DateId}");
+            }
+
+            ViewBag.LocalLeagueId = new SelectList(db.Leagues.OrderBy(t => t.Name), "LeagueId", "Name");
+            ViewBag.LocalId = new SelectList(db.Teams.Where(t => t.LeagueId == view.LocalId), "TeamId", "Name",view.LocalId);
+
+            ViewBag.VisitorLeagueId = new SelectList(db.Leagues.OrderBy(t => t.Name), "LeagueId", "Name");
+            ViewBag.VisitorId = new SelectList(db.Teams.Where(t => t.LeagueId == view.VisitorId), "TeamId", "Name",view.VisitorId);
+
+            ViewBag.TournamentGroupId = new SelectList(db.TournamentGroups.Where(tg => tg.TournamentId == view.Date.TournamentId).OrderBy(tg => tg.Name), "TournamentGroupId", "Name");
+
+            return View(view);
+        }
+
+        private Match ToMatch(MatchView view)
+        {
+
+            var match = new Match
+            {
+                DateId = view.DateId,
+                DateTime = Convert.ToDateTime($"{view.DateString} {view.TimeString}"),
+                LocalId = view.LocalId,
+                MatchId = view.MatchId,
+                StatusId = view.StatusId,
+                TournamentGroupId = view.TournamentGroupId,
+                VisitorId = view.VisitorId,
+            };
+            return match;
         }
         #endregion
 

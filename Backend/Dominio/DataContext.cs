@@ -19,6 +19,8 @@
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Conventions.Remove<OneToManyCascadeDeleteConvention>();
+            modelBuilder.Configurations.Add(new MatchesMap());
+            modelBuilder.Configurations.Add(new UsersMap());
         }
 
         public System.Data.Entity.DbSet<Dominio.League> Leagues { get; set; }
@@ -32,6 +34,14 @@
         public System.Data.Entity.DbSet<Dominio.Date> Dates { get; set; }
 
         public System.Data.Entity.DbSet<Dominio.TournamentTeam> TournamentTeams { get; set; }
+
+        public System.Data.Entity.DbSet<Dominio.UserType> UserTypes { get; set; }
+
+        public System.Data.Entity.DbSet<Dominio.User> Users { get; set; }
+
+        public System.Data.Entity.DbSet<Dominio.Match> Matches { get; set; }
+
+        public System.Data.Entity.DbSet<Dominio.Status> Status { get; set; }
 
         // Agregue un DbSet para cada tipo de entidad que desee incluir en el modelo. Para obtener más información 
         // sobre cómo configurar y usar un modelo Code First, vea http://go.microsoft.com/fwlink/?LinkId=390109.

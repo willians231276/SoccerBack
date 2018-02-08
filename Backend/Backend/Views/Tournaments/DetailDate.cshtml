@@ -4,31 +4,96 @@
     ViewBag.Title = "DetailDate";
 }
 
-<h2>Detail Date</h2>
-
+<h2>Tournament: @Model.Tournament.Name</h2>
+<h3>Date: @Model.Name</h3>
 <div>
-    <h4>Date</h4>
+
+
+
     <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Tournament.Name)
-        </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.Tournament.Name)
-        </dd>
+    <p>
+        @Html.ActionLink("Create New", "CreateMatch", new { id = Model.DateId })
+        @Html.ActionLink("Back to Date", "Details", new { id = Model.TournamentId })
+    </p>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
+    <hr />
 
-        <dd>
-            @Html.DisplayFor(model => model.Name)
-        </dd>
+    @if (Model.Matches.Count == 0)
+    {
+        <h4>No hay datos</h4>
+    }
+    else
+    {
 
-    </dl>
+        <table class="table">
+            <tr>
+
+                <th>
+                    @Html.DisplayNameFor(model => model.Matches.FirstOrDefault().Status.Name)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Matches.FirstOrDefault().TournamentGroup.Name)
+                </th>
+                <th>
+                    Local
+                </th>
+                <th>
+                    Visitor
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Matches.FirstOrDefault().DateTime)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Matches.FirstOrDefault().LocalGoals)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Matches.FirstOrDefault().VisitorGoals)
+                </th>
+                <th></th>
+            </tr>
+
+            @foreach (var item in Model.Matches.OrderBy(m => m.DateTime))
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Status.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TournamentGroup.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Local.Name)
+                        @if (!string.IsNullOrEmpty(item.Local.Logo))
+                        {
+                            <img src="@Url.Content(item.Local.Logo)" alt="Image" style="width:30px;height:30px;max-width:100%;min-height:100%" />
+                        }
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Visitor.Name)
+                        @if (!string.IsNullOrEmpty(item.Visitor.Logo))
+                        {
+                            <img src="@Url.Content(item.Visitor.Logo)" alt="Image" style="width:30px;height:30px;max-width:100%;min-height:100%" />
+                        }
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DateTime)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.LocalGoals)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.VisitorGoals)
+                    </td>
+                    <td>
+                        @Html.ActionLink("Edit", "EditMatch", new { id = item.MatchId }) |
+                        @Html.ActionLink("Delete", "DeleteMatch", new { id = item.MatchId })
+                    </td>
+                </tr>
+            }
+
+        </table>
+
+    }
 </div>
-<p>
-    @Html.ActionLink("Edit Date", "EditDate", new { id = Model.DateId }) |
-    @Html.ActionLink("Back to List", "Details",new {id= Model.TournamentId })
-</p>
+

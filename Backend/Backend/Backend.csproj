@@ -217,6 +217,7 @@
     <Compile Include="Models\TournamentView.cs" />
     <Compile Include="Models\UsersController.cs" />
     <Compile Include="Models\UserTypesController.cs" />
+    <Compile Include="Models\UserView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>

@@ -11,6 +11,7 @@ using Dominio;
 
 namespace Backend.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class UsuariosController : Controller
     {
         private DataContext db = new DataContext();
@@ -50,7 +51,7 @@ namespace Backend.Controllers
         // más información vea https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "UserId,FirstName,LastName,UserTypeId,Picture,Email,NickName,FavoriteTeamId,Points")] User user)
+        public async Task<ActionResult> Create(User user)
         {
             if (ModelState.IsValid)
             {
@@ -86,7 +87,7 @@ namespace Backend.Controllers
         // más información vea https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "UserId,FirstName,LastName,UserTypeId,Picture,Email,NickName,FavoriteTeamId,Points")] User user)
+        public async Task<ActionResult> Edit(User user)
         {
             if (ModelState.IsValid)
             {

@@ -13,7 +13,7 @@ using Backend.Helpers;
 
 namespace Backend.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public class TournamentsController : Controller
     {
         private DataContext db = new DataContext();

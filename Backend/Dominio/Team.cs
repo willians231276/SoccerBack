@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -34,14 +35,19 @@ namespace Dominio
 
         #region relaciones
 
+        [JsonIgnore]
         public virtual League League { get; set; }
 
+        [JsonIgnore]
         public virtual ICollection<User> Fans { get; set; }
 
+        [JsonIgnore]
         public virtual ICollection<Match> Locals { get; set; }
 
+        [JsonIgnore]
         public virtual ICollection<Match> Visitors { get; set; }
 
+        [JsonIgnore]
         public virtual ICollection<TournamentTeam> TournamentTeams { get; set; }
 
         #endregion

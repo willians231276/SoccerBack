@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -22,8 +23,11 @@ namespace Dominio
         public int OnwerId { get; set; }
 
         #region Relaciones
+
+        [JsonIgnore]
         public virtual User Owner { get; set; }
 
+        [JsonIgnore]
         public virtual ICollection<GroupUser> GroupUsers { get; set; } 
         #endregion
     }

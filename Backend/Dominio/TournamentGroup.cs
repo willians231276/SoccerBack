@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -24,9 +25,13 @@ namespace Dominio
         [Display(Name = "Tournament")]
         public int TournamentId { get; set; }
 
+        [JsonIgnore]
         public virtual Tournament Tournament { get; set; }
+
+        [JsonIgnore]
         public virtual ICollection<Match> Matches { get; set; }
 
+        [JsonIgnore]
         public virtual ICollection<TournamentTeam> TournamentTeams { get; set; }
 
     }

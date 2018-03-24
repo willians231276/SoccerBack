@@ -12,6 +12,9 @@
 <table class="table">
     <tr>
         <th>
+            Foto
+        </th>
+        <th>
             @Html.DisplayNameFor(model => model.FavoriteTeam.Name)
         </th>
         <th>
@@ -38,38 +41,48 @@
         <th></th>
     </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.FavoriteTeam.Name)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.UserType.Name)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.FirstName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.LastName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Picture)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Email)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.NickName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Points)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.UserId }) |
-            @Html.ActionLink("Details", "Details", new { id=item.UserId }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.UserId })
-        </td>
-    </tr>
-}
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @if (!string.IsNullOrEmpty(item.FavoriteTeam.Logo))
+                {
+                    <img src="@Url.Content(item.FavoriteTeam.Logo)" alt="Image" style="width:60px;height:60;max-width:100%;min-height:100%" />
+                }
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FavoriteTeam.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UserType.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FirstName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LastName)
+            </td>
+            <td>
+                @if (!string.IsNullOrEmpty(item.Picture))
+                {
+                    <img src="@Url.Content(item.Picture)" alt="Image" style="width:60px;height:60;max-width:100%;min-height:100%" />
+                }
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Email)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NickName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Points)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.UserId }) |
+                @Html.ActionLink("Details", "Details", new { id = item.UserId }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.UserId })
+            </td>
+        </tr>
+    }
 
 </table>

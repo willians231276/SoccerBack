@@ -59,4 +59,24 @@
         return false;
     });
 
+    $("#FavoriteLeagueId").change(function () {
+        $("#FavoriteTeamId").empty();
+        $("#FavoriteTeamId").append('<option value="0">[Select a team...]</option>');
+        $.ajax({
+            type: 'POST',
+            url: Url,
+            dataType: 'json',
+            data: { leagueId: $("#FavoriteLeagueId").val() },
+            success: function (teams) {
+                $.each(teams, function (i, team) {
+                    $("#FavoriteTeamId").append('<option value="' + team.TeamId + '">' + team.Name + '</option>');
+                });
+            },
+            error: function (ex) {
+                alert('Failed to retrieve team.' + ex);
+            }
+        });
+        return false;
+    });
+
 });

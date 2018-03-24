@@ -10,7 +10,7 @@ namespace Backend.Helpers
 {
     public class UsersHelper: IDisposable
     {
-        private static DataContext userContext = new DataContext();
+        private static ApplicationDbContext userContext = new ApplicationDbContext();
         private static DataContext db = new DataContext();
 
         public static bool DeleteUser(string userName, string roleName)

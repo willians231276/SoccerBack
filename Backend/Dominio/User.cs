@@ -43,6 +43,7 @@ namespace Dominio
         [Display(Name = "Nick name")]
         public string NickName { get; set; }
 
+
         [Display(Name = "Favorite team")]
         public int FavoriteTeamId { get; set; }
 

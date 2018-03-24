@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -30,6 +31,7 @@ namespace Dominio
         public int Points { get; set; }
 
         #region Relaciones
+        [JsonIgnore]
         public virtual Group Group { get; set; }
         #endregion
     }

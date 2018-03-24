@@ -6,7 +6,7 @@ namespace Dominio
     {
         public UsersMap()
         {
-            HasRequired(u => u.FavoriteTeam).WithMany(f => f.Fans).HasForeignKey(h => h.FavoriteTeamId);
+            HasRequired(o => o.FavoriteTeam).WithMany(m => m.Fans).HasForeignKey(m => m.FavoriteTeamId);
         }
     }
 }

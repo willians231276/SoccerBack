@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -20,6 +21,7 @@ namespace Dominio
 
 
         #region Relaciones
+        [JsonIgnore]
         public virtual ICollection<Team> Teams { get; set; }
         #endregion
     }
